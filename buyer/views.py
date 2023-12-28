@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -21,7 +22,13 @@ def login_view(request):
     return render(request, 'login.html')
 
 def register_view(request):
-    return render(request, 'register.html')
+    if request.method == 'GET':
+        return render(request, 'register.html')
+    else:
+        return HttpResponse('register URL with POST method')
+        # create one row in db table
+        # add user in our db
+
 
 def header_view(request):
     return render(request, 'header.html')

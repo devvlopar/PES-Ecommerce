@@ -11,5 +11,5 @@ class Buyer(models.Model):
     address = models.CharField(max_length = 255)
     mobile = models.CharField(max_length = 255)
 
-    # def __str__(self):
-    #     return self.email
+    def __str__(self):
+        return self.full_name
