@@ -29,27 +29,40 @@ def register_view(request):
     if request.method == 'GET':
         return render(request, 'register.html')
     else:
-        if request.POST['password'] == request.POST['cpassword']:
-            global c_otp
-            c_otp = randint(100_000, 999_999)
-            global user_data
-            user_data = {
-                'full_name': request.POST['full_name'],
-                'email': request.POST['email'],
-                'password':request.POST['password'],
-                'mobile': request.POST['mobile'],
-                'address': request.POST['address'],
-                'cpassword': request.POST['cpassword']
-            }
+        # email validation
+        form_email = request.POST['email']
+        try:
+            user_obj = Buyer.objects.get(email = form_email)
+            return render(request, 'register.html', {'msg': 'This email is already in Use.'})
 
-            subject = 'Ecommerce Registration'
-            message = f'Hello!! your OTP is {c_otp}'
-            sender = settings.EMAIL_HOST_USER
-            rec = [request.POST['email']]
-            send_mail(subject, message, sender, rec)
-            return render(request, 'otp.html')
-        else:
-            return render(request, 'register.html', {'msg': 'BOTH passwords do not matchh!!!'})
+        except:
+            # error occurred while finding that email in DB
+            # it means entered email is completely new
+            # we can create a new account for it..
+
+
+            # password & confirm password validation
+            if request.POST['password'] == request.POST['cpassword']:
+                global c_otp
+                c_otp = randint(100_000, 999_999)
+                global user_data
+                user_data = {
+                    'full_name': request.POST['full_name'],
+                    'email': request.POST['email'],
+                    'password':request.POST['password'],
+                    'mobile': request.POST['mobile'],
+                    'address': request.POST['address'],
+                    'cpassword': request.POST['cpassword']
+                }
+
+                subject = 'Ecommerce Registration'
+                message = f'Hello!! your OTP is {c_otp}'
+                sender = settings.EMAIL_HOST_USER
+                rec = [request.POST['email']]
+                send_mail(subject, message, sender, rec)
+                return render(request, 'otp.html')
+            else:
+                return render(request, 'register.html', {'msg': 'BOTH passwords do not matchh!!!'})
         
         
 def otp_view(request):
