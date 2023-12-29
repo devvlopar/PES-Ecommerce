@@ -1,5 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.core.mail import send_mail
+from random import randint
+from django.conf import settings
+from buyer.models import Buyer
 
 # Create your views here.
 
@@ -25,9 +29,48 @@ def register_view(request):
     if request.method == 'GET':
         return render(request, 'register.html')
     else:
-        return HttpResponse('register URL with POST method')
-        # create one row in db table
-        # add user in our db
+        if request.POST['password'] == request.POST['cpassword']:
+            global c_otp
+            c_otp = randint(100_000, 999_999)
+            global user_data
+            user_data = {
+                'full_name': request.POST['full_name'],
+                'email': request.POST['email'],
+                'password':request.POST['password'],
+                'mobile': request.POST['mobile'],
+                'address': request.POST['address'],
+                'cpassword': request.POST['cpassword']
+            }
+
+            subject = 'Ecommerce Registration'
+            message = f'Hello!! your OTP is {c_otp}'
+            sender = settings.EMAIL_HOST_USER
+            rec = [request.POST['email']]
+            send_mail(subject, message, sender, rec)
+            return render(request, 'otp.html')
+        else:
+            return render(request, 'register.html', {'msg': 'BOTH passwords do not matchh!!!'})
+        
+        
+def otp_view(request):
+    pass
+    # compare otp entered by user and generated otp
+    # c_otp = 315308 INTEGER
+    # request.POST['u_otp'] = '315308' STRING
+
+    if str(c_otp) == request.POST['u_otp']:
+        # create a row in db
+        Buyer.objects.create(
+            full_name = user_data['full_name'],
+            email = user_data['email'],
+            password = user_data['password'],
+            address = user_data['address'],
+            mobile = user_data['mobile']
+        )
+        return render(request, 'register.html', {'msg': 'Account Created Successfully!!!'})
+
+    else:
+        return render(request, 'otp.html', {'msg': "entered OTP is INVALID"})
 
 
 def header_view(request):

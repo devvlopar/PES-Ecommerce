@@ -48,6 +48,7 @@
 						</p>
 						<form action="{% url 'register' %}" method="post">
 							{% csrf_token %}
+							{{msg}}
 							<div class="styled-input agile-styled-input-top">
 								<input type="text" placeholder="Full Name" name="full_name" required="">
 							</div>

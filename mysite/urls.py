@@ -28,6 +28,8 @@ urlpatterns = [
     path('login/', login_view, name="login"),
     path('register/', register_view, name="register"),
     path('header/', header_view, name="header"),
+    path('otp/', otp_view, name="otp"),
+
 
 
 
