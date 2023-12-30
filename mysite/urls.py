@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls.static import static
 from buyer.views import *
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,9 +32,4 @@ urlpatterns = [
     path('header/', header_view, name="header"),
     path('otp/', otp_view, name="otp"),
     path('logout/', logout_view, name="logout"),
-
-
-
-
-
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

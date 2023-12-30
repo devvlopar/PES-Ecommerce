@@ -33,14 +33,13 @@
                     <a href="#" data-toggle="modal" data-target="#myModal1">
                         <span class="fa fa-truck" aria-hidden="true"></span>Track Order</a>
                 </li>
-                <li>
-                    <span class="fa fa-phone" aria-hidden="true"></span> 001 234 5678
-                </li>
+                
                 
                 {% if user_data %}
                 <li>
                     <a href="" >
-                        <span class="fa fa-user" aria-hidden="true"></span> {{user_data.full_name}} </a>
+                        <img src="{{user_data.profile_pic.url}}" alt="profile pic" style="max-width: 51px; max-height: 51px; border-radius: 51px; ">
+                        <span aria-hidden="true"></span> {{user_data.full_name}} </a>
                 </li>
                 <li>
                     <a href="{% url 'logout' %}" >

@@ -43,19 +43,19 @@ def login_view(request):
     else:
         #check the email & password
         # start the session
-        try:
-            session_user = Buyer.objects.get(email = request.POST['email'])
-            # validating password
-            if request.POST['password'] == session_user.password:
-                #starting the session
-                request.session['email'] = session_user.email
-                return render(request, 'index.html', {'user_data':session_user})
+        # try:
+        session_user = Buyer.objects.get(email = request.POST['email'])
+        # validating password
+        if request.POST['password'] == session_user.password:
+            #starting the session
+            request.session['email'] = session_user.email
+            return render(request, 'index.html', {'user_data':session_user})
 
-            else:
-                return render(request, 'login.html', {'msg': "Invalid Password!!"})
-        except:
-            # if entered email is not registered
-            return render(request, 'login.html', {"msg":'This email is not registered'})
+        else:
+            return render(request, 'login.html', {'msg': "Invalid Password!!"})
+    # except:
+        # if entered email is not registered
+        return render(request, 'login.html', {"msg":'This email is not registered'})
 
 def register_view(request):
     if request.method == 'GET':
