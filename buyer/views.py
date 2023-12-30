@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.mail import send_mail
 from random import randint
@@ -8,22 +8,54 @@ from buyer.models import Buyer
 # Create your views here.
 
 def home(request):
-    return render(request, 'index.html')
+    if 'email' in request.session:
+        user_obj = Buyer.objects.get(email = request.session['email'])
+        return render(request, 'index.html', {'user_data': user_obj})
+    else:
+        return render(request, 'index.html')
 
 def about_view(request):
-    return render(request, 'about.html')
-
+    if 'email' in request.session:
+        user_obj = Buyer.objects.get(email = request.session['email'])
+        return render(request, 'about.html', {'user_data': user_obj})
+    else:
+        return render(request, 'about.html')
 def checkout_view(request):
     return render(request, 'checkout.html')
 
 def faqs_view(request):
-    return render(request, 'faqs.html')
+    if 'email' in request.session:
+        user_obj = Buyer.objects.get(email = request.session['email'])
+        return render(request, 'faqs.html', {'user_data': user_obj})
+    else:
+        return render(request, 'faqs.html')
 
 def contact_view(request):
-    return render(request, 'contact.html')
+    if 'email' in request.session:
+        user_obj = Buyer.objects.get(email = request.session['email'])
+        return render(request, 'contact.html', {'user_data': user_obj})
+    else:
+        return render(request, 'contact.html')
 
 def login_view(request):
-    return render(request, 'login.html')
+    if request.method == 'GET':
+        return render(request, 'login.html')
+    else:
+        #check the email & password
+        # start the session
+        try:
+            session_user = Buyer.objects.get(email = request.POST['email'])
+            # validating password
+            if request.POST['password'] == session_user.password:
+                #starting the session
+                request.session['email'] = session_user.email
+                return render(request, 'index.html', {'user_data':session_user})
+
+            else:
+                return render(request, 'login.html', {'msg': "Invalid Password!!"})
+        except:
+            # if entered email is not registered
+            return render(request, 'login.html', {"msg":'This email is not registered'})
 
 def register_view(request):
     if request.method == 'GET':
@@ -32,6 +64,7 @@ def register_view(request):
         # email validation
         form_email = request.POST['email']
         try:
+            #checking if email entered in html form is present inside db
             user_obj = Buyer.objects.get(email = form_email)
             return render(request, 'register.html', {'msg': 'This email is already in Use.'})
 
@@ -88,3 +121,8 @@ def otp_view(request):
 
 def header_view(request):
     return render(request, 'header.html')
+
+
+def logout_view(request):
+    del request.session['email']
+    return redirect('index') # name= argument in urls.py

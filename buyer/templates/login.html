@@ -48,9 +48,11 @@
                                 <a href="#" data-toggle="modal" data-target="#myModal2">
                                     Sign Up Now</a>
                             </p>
-                            <form action="#" method="post">
+                            <form action="{% url 'login' %}" method="post">
+                                {% csrf_token %}
+                                {{msg}}
                                 <div class="styled-input agile-styled-input-top">
-                                    <input type="text" placeholder="User Name" name="Name" required="">
+                                    <input type="text" placeholder="Email" name="email" required="">
                                 </div>
                                 <div class="styled-input">
                                     <input type="password" placeholder="Password" name="password" required="">

@@ -1,6 +1,9 @@
 {% load static %}
 
 
+{% comment %} if we are trying to use python like code then we will use jinja2 template syntax {% endcomment %}
+
+
 <div class="header-most-top">
     <p>Grocery Offer Zone Top Deals & Discounts</p>
 </div>
@@ -33,6 +36,19 @@
                 <li>
                     <span class="fa fa-phone" aria-hidden="true"></span> 001 234 5678
                 </li>
+                
+                {% if user_data %}
+                <li>
+                    <a href="" >
+                        <span class="fa fa-user" aria-hidden="true"></span> {{user_data.full_name}} </a>
+                </li>
+                <li>
+                    <a href="{% url 'logout' %}" >
+                        <span class="fa fa-sign-out" aria-hidden="true"></span> logout </a>
+                </li>
+
+                {% else %}
+
                 <li>
                     <a href="{% url 'login' %}" >
                         <span class="fa fa-unlock-alt" aria-hidden="true"></span> Sign In </a>
@@ -41,6 +57,9 @@
                     <a href="{% url 'register' %}" >
                         <span class="fa fa-pencil-square-o" aria-hidden="true"></span> Sign Up </a>
                 </li>
+
+                {% endif %}
+
             </ul>
             <!-- //header lists -->
             <!-- search -->
