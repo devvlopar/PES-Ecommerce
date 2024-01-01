@@ -1,14 +1,24 @@
 from django.shortcuts import render, redirect
-from seller.models import SellerTable
+from seller.models import SellerTable, CategoryTable, Product
 
 # Create your views here.
 
+
+# this decorator is for validating login
+def login_needed(fun1):
+    def inner_fun(request):
+        if 'seller_email' not in request.session:
+            return redirect('seller_login')
+        else:
+            return fun1(request)
+    return inner_fun
+
+
+@login_needed
 def index_view(request):
-    if 'seller_email' in request.session:
-        user_data = SellerTable.objects.get(email=request.session['seller_email'])
-        return render(request,'seller_index.html', {"user_data":user_data})
-    else:
-        return render(request, 'seller_login.html')
+    user_data = SellerTable.objects.get(email=request.session['seller_email'])
+    return render(request,'seller_index.html', {"user_data":user_data})
+    
 
 def login_view(request):
     if request.method == 'GET':
@@ -94,10 +104,22 @@ def logout_view(request):
     del request.session['seller_email']
     return redirect('seller_login')
 
-
+@login_needed
 def add_product(request):
+    user_data = SellerTable.objects.get(email = request.session['seller_email'])
+    all_categories = CategoryTable.objects.all()
     if request.method == 'GET':
-        return render(request, 'add_product.html')
+        return render(request, 'add_product.html', {'user_data':user_data, 'categories':all_categories})
     else:
         # create a row in Product db table
-        pass
+        
+        Product.objects.create(
+        product_name = request.POST['product_name'],
+        image = request.FILES['image'],
+        des = request.POST['des'],
+        price = request.POST['price'],
+        stock = request.POST['stock'],
+        seller = SellerTable.objects.get(email = request.session['seller_email']),
+        category= CategoryTable.objects.get(id = int(request.POST['category']))
+        )      
+        return render(request, 'add_product.html', {'user_data':user_data, 'msg': 'Product Successfully Added!!', 'categories':all_categories})

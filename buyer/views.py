@@ -4,15 +4,17 @@ from django.core.mail import send_mail
 from random import randint
 from django.conf import settings
 from buyer.models import Buyer
+from seller.models import Product
 
 # Create your views here.
 
 def home(request):
+    all_products = Product.objects.all()
     if 'email' in request.session:
         user_obj = Buyer.objects.get(email = request.session['email'])
-        return render(request, 'index.html', {'user_data': user_obj})
+        return render(request, 'index.html', {'user_data': user_obj, 'all_products':all_products})
     else:
-        return render(request, 'index.html')
+        return render(request, 'index.html', {'all_products':all_products})
 
 def about_view(request):
     if 'email' in request.session:
