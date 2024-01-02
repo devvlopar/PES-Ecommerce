@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.core.mail import send_mail
 from random import randint
 from django.conf import settings
-from buyer.models import Buyer
+from buyer.models import Buyer, Cart
 from seller.models import Product
 
 # Create your views here.
@@ -45,19 +45,19 @@ def login_view(request):
     else:
         #check the email & password
         # start the session
-        # try:
-        session_user = Buyer.objects.get(email = request.POST['email'])
-        # validating password
-        if request.POST['password'] == session_user.password:
-            #starting the session
-            request.session['email'] = session_user.email
-            return render(request, 'index.html', {'user_data':session_user})
+        try:
+            session_user = Buyer.objects.get(email = request.POST['email'])
+            # validating password
+            if request.POST['password'] == session_user.password:
+                #starting the session
+                request.session['email'] = session_user.email
+                return redirect('index')
 
-        else:
-            return render(request, 'login.html', {'msg': "Invalid Password!!"})
-    # except:
-        # if entered email is not registered
-        return render(request, 'login.html', {"msg":'This email is not registered'})
+            else:
+                return render(request, 'login.html', {'msg': "Invalid Password!!"})
+        except:
+            # if entered email is not registered
+            return render(request, 'login.html', {"msg":'This email is not registered'})
 
 def register_view(request):
     if request.method == 'GET':
@@ -128,3 +128,22 @@ def header_view(request):
 def logout_view(request):
     del request.session['email']
     return redirect('index') # name= argument in urls.py
+
+
+def add_to_cart(request, pk):
+    if 'email' in request.session:
+        #add that product in db table
+        Cart.objects.create(
+            buyer = Buyer.objects.get(email= request.session['email']),
+            product = Product.objects.get(id = pk)
+        )
+        return redirect('index')
+    else:
+        # no buyer has logged in
+        return redirect('login')
+
+
+
+
+
+

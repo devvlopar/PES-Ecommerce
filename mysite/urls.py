@@ -32,5 +32,6 @@ urlpatterns = [
     path('header/', header_view, name="header"),
     path('otp/', otp_view, name="otp"),
     path('logout/', logout_view, name="logout"),
+    path('add_to_cart/<int:pk>', add_to_cart, name='add_to_cart'),
     path('seller/', include('seller.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

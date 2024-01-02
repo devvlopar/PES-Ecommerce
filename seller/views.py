@@ -123,3 +123,31 @@ def add_product(request):
         category= CategoryTable.objects.get(id = int(request.POST['category']))
         )      
         return render(request, 'add_product.html', {'user_data':user_data, 'msg': 'Product Successfully Added!!', 'categories':all_categories})
+
+
+
+def inventory_view(request):
+    user_data = SellerTable.objects.get(email = request.session['seller_email'])
+    my_products = Product.objects.filter(seller = user_data)
+    return render(request, 'inventory.html', {'user_data': user_data, 'my_products':my_products})
+
+def edit_product(request, pk):
+    product_info = Product.objects.get(id = pk)
+    if request.method == 'GET':
+        all_c = CategoryTable.objects.all()
+        user_data = SellerTable.objects.get(email = request.session['seller_email'])
+        return render(request, 'edit_product.html', {'product': product_info, 'categories':all_c, 'user_data':user_data})
+    else:
+        if request.FILES:
+            product_info.image = request.FILES['image']
+        product_info.product_name = request.POST['product_name']
+        product_info.price = request.POST['price']
+        product_info.stock = request.POST['stock']
+        product_info.des = request.POST['des']
+        product_info.category = CategoryTable.objects.get(id = request.POST['category'])
+
+        product_info.save() # it will update in db
+        
+        all_c = CategoryTable.objects.all()
+        user_data = SellerTable.objects.get(email = request.session['seller_email'])
+        return render(request, 'edit_product.html', {'product': product_info, 'categories':all_c, 'user_data':user_data, 'msg':"Successfully Updated!!"})
