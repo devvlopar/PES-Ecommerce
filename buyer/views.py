@@ -143,7 +143,22 @@ def add_to_cart(request, pk):
         return redirect('login')
 
 
+def cart_view(request):
+    try:
+        user_data = Buyer.objects.get(email = request.session['email'])
+        my_cart = Cart.objects.filter(buyer = user_data)
+        p_count = len(my_cart)
+        total_cost = 0
+        for i in my_cart:
+            total_cost += i.product.price
+        return render(request, 'cart.html', {'user_data':user_data, 'my_cart':my_cart, 'p_count':p_count, 'total_cost':total_cost})
+    except:
+        return redirect('login')
 
 
+def del_cart(request, pk):
+    c1 = Cart.objects.get(id = pk)
+    c1.delete()
+    return redirect('cart')
 
 
