@@ -111,10 +111,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			</div>
 			<div class="checkout-left">
 				<div class="address_form_agile">
-					<h4>${{total_cost}}</h4>
+					<h4>Total Amount to Pay: ${{total_cost}}</h4>
 					
 					<div class="checkout-right-basket">
-						<a href="payment.html">Make a Payment
+						<a id="pay-btn">Make a Payment
 							<span class="fa fa-hand-o-right" aria-hidden="true"></span>
 						</a>
 					</div>
@@ -648,6 +648,32 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<script src="{% static 'js/bootstrap.js' %}"></script>
 	<!-- //for bootstrap working -->
 	<!-- //js-files -->
+	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+	<script>
+		const options = {
+			// Enter the Key ID generated from the Dashboard
+			key: "{{ razorpay_merchant_key }}", 
+       
+			// Amount is in currency subunits.
+			// Default currency is INR. Hence, 
+			// 50000 refers to 50000 paise
+			amount: "{{ razorpay_amount }}", 
+			currency: "{{ currency }}",
+			 
+			// Your/store name.
+			name: "Ecommerce", 
+			 
+			// Pass the `id` obtained in the response of Step 1
+			order_id: "{{ razorpay_order_id }}", 
+			callback_url: "{{ callback_url }}"
+
+		};
+		var rzp1 = new Razorpay(options);
+		document.getElementById("pay-btn").onclick = function (e) {
+			rzp1.open();
+			e.preventDefault();
+		}
+	</script>
 
 </body>
 

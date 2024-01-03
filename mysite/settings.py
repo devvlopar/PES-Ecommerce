@@ -135,3 +135,12 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'devangsingh101@gmail.com'
 EMAIL_HOST_PASSWORD = 'lbggfipacfcryrbs'
+
+f = open('rzp.csv')
+str1 = f.read()
+str2 = str1.split('\n')[1]
+k_and_s = str2.split(',')
+RAZOR_KEY_ID = k_and_s[0]
+RAZOR_KEY_SECRET = k_and_s[1]
+
+
