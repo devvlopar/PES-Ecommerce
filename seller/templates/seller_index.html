@@ -5,7 +5,9 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-12">
+  <div class="col-3">
+  </div>
+    <div class="col-9">
       <div class="card">
         <div class="card-header">
           <h3 class="card-title">Fixed Header Table</h3>
@@ -27,70 +29,33 @@
           <table class="table table-head-fixed text-nowrap">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>User</th>
+                <th>Order ID</th>
                 <th>Date</th>
                 <th>Status</th>
-                <th>Reason</th>
+                <th>Product Name</th>
+                <th>Buyer Name</th>
+                <th>Delivery Address</th>
               </tr>
             </thead>
             <tbody>
+
+              {% for item in order_items %}
               <tr>
-                <td>183</td>
-                <td>John Doe</td>
-                <td>11-7-2014</td>
-                <td><span class="tag tag-success">Approved</span></td>
-                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                <td>{{item.order_id}}</td>
+                <td>{{item.time}}</td>
+                <td>
+                  <select>
+                    <option value="Order Placed" >Order Placed</option>
+                    <option value="Order Shipped" >Order Shipped</option>
+                    <option value="In Transit" >In Transit</option>
+                    <option value="Delivered" >Delivered</option>
+                  </select>
+                </td>
+                <td><span class="tag tag-success">{{item.product.product_name}}</span></td>
+                <td>{{item.buyer.full_name}}</td>
+                <td>{{item.buyer.address}}</td>
               </tr>
-              <tr>
-                <td>219</td>
-                <td>Alexander Pierce</td>
-                <td>11-7-2014</td>
-                <td><span class="tag tag-warning">Pending</span></td>
-                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-              </tr>
-              <tr>
-                <td>657</td>
-                <td>Bob Doe</td>
-                <td>11-7-2014</td>
-                <td><span class="tag tag-primary">Approved</span></td>
-                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-              </tr>
-              <tr>
-                <td>175</td>
-                <td>Mike Doe</td>
-                <td>11-7-2014</td>
-                <td><span class="tag tag-danger">Denied</span></td>
-                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-              </tr>
-              <tr>
-                <td>134</td>
-                <td>Jim Doe</td>
-                <td>11-7-2014</td>
-                <td><span class="tag tag-success">Approved</span></td>
-                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-              </tr>
-              <tr>
-                <td>494</td>
-                <td>Victoria Doe</td>
-                <td>11-7-2014</td>
-                <td><span class="tag tag-warning">Pending</span></td>
-                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-              </tr>
-              <tr>
-                <td>832</td>
-                <td>Michael Doe</td>
-                <td>11-7-2014</td>
-                <td><span class="tag tag-primary">Approved</span></td>
-                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-              </tr>
-              <tr>
-                <td>982</td>
-                <td>Rocky Doe</td>
-                <td>11-7-2014</td>
-                <td><span class="tag tag-danger">Denied</span></td>
-                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>

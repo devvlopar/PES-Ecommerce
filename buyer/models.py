@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from seller.models import Product
 
@@ -22,4 +23,19 @@ class Cart(models.Model):
 
     def __str__(self):
         return self.buyer.full_name
+        
+
+class Orders(models.Model):
+    status_choices = (('Order Placed','Order Placed'), ('Order Shipped','Order Shipped'), ('In Transit', 'In Transit'), ('Delivered', 'Delivered'))
+
+    order_id = models.UUIDField(default=uuid.uuid4,unique=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
+    status = models.CharField(max_length=255, choices=status_choices)
+    payment_id = models.CharField(max_length=255)
+    time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.order_id)
+    
     

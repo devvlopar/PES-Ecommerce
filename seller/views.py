@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from seller.models import SellerTable, CategoryTable, Product
+from buyer.models import Orders
 
 # Create your views here.
 
@@ -17,7 +18,8 @@ def login_needed(fun1):
 @login_needed
 def index_view(request):
     user_data = SellerTable.objects.get(email=request.session['seller_email'])
-    return render(request,'seller_index.html', {"user_data":user_data})
+    order_items = Orders.objects.filter(product__seller = user_data).exclude(status='Delivered')
+    return render(request,'seller_index.html', {"user_data":user_data, 'order_items':order_items})
     
 
 def login_view(request):

@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
+from uuid import uuid4
 from django.http import HttpResponse
 from django.core.mail import send_mail
 from random import randint
 from django.conf import settings
-from buyer.models import Buyer, Cart
+from buyer.models import Buyer, Cart, Orders
 from seller.models import Product
 import razorpay
 from django.views.decorators.csrf import csrf_exempt
@@ -209,18 +210,42 @@ def paymenthandler(request):
             result = razorpay_client.utility.verify_payment_signature(
                 params_dict)
             if result is not None:
-                f_amount = amount  # Rs version
-                try:
+                f_amount = amount  # Rs version 
+                # try:
  
                     # capture the payemt
-                    razorpay_client.payment.capture(payment_id, f_amount)
- 
+                razorpay_client.payment.capture(payment_id, f_amount)
+
+                cart_items = Cart.objects.filter(buyer = user_data)
+                user_data = Buyer.objects.get(email = request.session['email'])
+                for item in cart_items:
+
+                    #reduce product stock
+                    pro = Product.objects.get(id = item.product.id)
+                    pro.stock -= 1
+                    pro.save()
+
+                    #creating order for that item
+                    Orders.objects.create(
+                        order_id = uuid4(),
+                        product = pro,
+                        buyer = user_data,
+                        status = 'Order Placed',
+                        payment_id = payment_id
+                    )
+
+                    #deleting that Item from Cart
+                    item.delete()
+
+
+
+                    
                     # render success page on successful caputre of payment
                     return render(request, 'paymentsuccess.html')
-                except:
+                # except:
  
-                    # if there is an error while capturing payment.
-                    return render(request, 'paymentfail.html')
+                #     # if there is an error while capturing payment.
+                #     return render(request, 'paymentfail.html')
             else:
  
                 # if signature verification fails.
