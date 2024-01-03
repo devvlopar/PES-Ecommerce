@@ -34,7 +34,7 @@ def login_view(request):
         if request.POST['password'] == session_user.password:
             #starting the session
             request.session['seller_email'] = session_user.email
-            return render(request, 'seller_index.html', {'user_data':session_user})
+            return redirect('seller_index')
 
         else:
             return render(request, 'seller_login.html', {'msg': "Invalid Password!!"})

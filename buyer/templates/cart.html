@@ -84,9 +84,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							</tr>
 						</thead>
 						<tbody>
-
 							{% for i in my_cart %}
-
+							
 							<tr class="rem1">
 								
 								<td class="invert-image">
@@ -111,13 +110,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			</div>
 			<div class="checkout-left">
 				<div class="address_form_agile">
+					<h3>{{msg}}</h3>
 					<h4>Total Amount to Pay: ${{total_cost}}</h4>
 					
+					{% if my_cart %}
 					<div class="checkout-right-basket">
 						<a id="pay-btn">Make a Payment
 							<span class="fa fa-hand-o-right" aria-hidden="true"></span>
 						</a>
 					</div>
+					{% endif %}
 				</div>
 				<div class="clearfix"> </div>
 			</div>
@@ -649,6 +651,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<!-- //for bootstrap working -->
 	<!-- //js-files -->
 	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+	{% if my_cart %}
 	<script>
 		const options = {
 			// Enter the Key ID generated from the Dashboard
@@ -674,6 +677,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			e.preventDefault();
 		}
 	</script>
+	{% endif %}
 
 </body>
 

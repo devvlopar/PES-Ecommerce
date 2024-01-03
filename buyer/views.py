@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from uuid import uuid4
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.mail import send_mail
 from random import randint
 from django.conf import settings
@@ -153,6 +153,10 @@ def cart_view(request):
         my_cart = Cart.objects.filter(buyer = user_data)
         p_count = len(my_cart)
         total_cost = 0
+
+        if p_count == 0:
+            return render(request, 'cart.html', {'user_data':user_data,'msg':"Your cart is empty",'p_count':p_count, 'total_cost':total_cost})
+
         for i in my_cart:
             total_cost += i.product.price
         
@@ -192,6 +196,7 @@ def del_cart(request, pk):
 
 @csrf_exempt
 def paymenthandler(request):
+
     # only accept POST request.
     if request.method == "POST":
         try:
@@ -205,53 +210,52 @@ def paymenthandler(request):
                 'razorpay_payment_id': payment_id,
                 'razorpay_signature': signature
             }
- 
+
             # verify the payment signature.
             result = razorpay_client.utility.verify_payment_signature(
                 params_dict)
             if result is not None:
                 f_amount = amount  # Rs version 
-                # try:
- 
+                try:
+
                     # capture the payemt
-                razorpay_client.payment.capture(payment_id, f_amount)
+                    razorpay_client.payment.capture(payment_id, f_amount)
 
-                cart_items = Cart.objects.filter(buyer = user_data)
-                user_data = Buyer.objects.get(email = request.session['email'])
-                for item in cart_items:
+                    user_data = Buyer.objects.get(email = request.session['email'])
+                    cart_items = Cart.objects.filter(buyer = user_data)
+                    for item in cart_items:
 
-                    #reduce product stock
-                    pro = Product.objects.get(id = item.product.id)
-                    pro.stock -= 1
-                    pro.save()
+                        #reduce product stock
+                        pro = Product.objects.get(id = item.product.id)
+                        pro.stock -= 1
+                        pro.save()
 
-                    #creating order for that item
-                    Orders.objects.create(
-                        order_id = uuid4(),
-                        product = pro,
-                        buyer = user_data,
-                        status = 'Order Placed',
-                        payment_id = payment_id
-                    )
+                        #creating order for that item
+                        Orders.objects.create(
+                            order_id = uuid4(),
+                            product = pro,
+                            buyer = user_data,
+                            status = 'Order Placed',
+                            payment_id = payment_id
+                        )
 
-                    #deleting that Item from Cart
-                    item.delete()
+                        #deleting that Item from Cart
+                        item.delete()
 
 
 
-                    
+                        
                     # render success page on successful caputre of payment
                     return render(request, 'paymentsuccess.html')
-                # except:
- 
-                #     # if there is an error while capturing payment.
-                #     return render(request, 'paymentfail.html')
+                except:
+
+                    # if there is an error while capturing payment.
+                    return render(request, 'paymentfail.html')
             else:
- 
+
                 # if signature verification fails.
                 return render(request, 'paymentfail.html')
         except:
- 
             # if we don't find the required parameters in POST data
             return HttpResponseBadRequest()
     else:
